@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.kineticgain.com/defense-ai-incident-card-profile/v0.1",
+  "title": "Defense AI Incident Card",
+  "type": "object",
+  "required": ["incident_id", "schema_version", "contractor", "event_type", "occurred_at", "discovered_at", "severity", "ai_system", "affected_data", "regulatory_basis", "response_actions"],
+  "additionalProperties": false,
+  "properties": {
+    "incident_id": { "type": "string", "minLength": 1 },
+    "schema_version": { "const": "0.1" },
+    "published_at": { "type": "string", "format": "date-time" },
+    "contractor": {
+      "type": "object",
+      "required": ["cage_code_tokenized"],
+      "properties": {
+        "cage_code_tokenized": { "type": "string" },
+        "duns_tokenized": { "type": "string" },
+        "facility_clearance_level": { "enum": ["UNCLASSIFIED", "SECRET", "TOP-SECRET", "TS-SCI"] }
+      }
+    },
+    "event_type": { "enum": [
+      "dfars-72-hour-cyber-incident",
+      "cui-spillage-detected",
+      "cui-marking-failure",
+      "cui-mishandling-on-unauthorized-system",
+      "itar-deemed-export-violation",
+      "itar-license-mismatch",
+      "ear-license-mismatch",
+      "ear-entity-list-screening-failure",
+      "foreign-person-unauthorized-access",
+      "foreign-person-access-attempt-blocked",
+      "classified-environment-ai-misuse",
+      "scif-policy-violation-detected",
+      "nispom-insider-threat-flag",
+      "personnel-clearance-status-change-mishandling",
+      "cmmc-l2-l3-readiness-gap-discovered",
+      "cmmc-poam-open-finding-related-failure",
+      "sprs-self-assessment-discrepancy",
+      "ai-generated-classified-marking-error",
+      "ai-tool-supply-chain-compromise-detected",
+      "ai-tool-update-introduced-non-conformance",
+      "ai-output-on-unverified-us-person-system",
+      "third-party-shared-responsibility-incident"
+    ] },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "discovered_at": { "type": "string", "format": "date-time" },
+    "severity": { "enum": ["S1-catastrophic", "S2-critical", "S3-significant", "S4-moderate", "S5-low"] },
+    "ai_system": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "ai_tool_card_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "affected_data": {
+      "type": "object",
+      "required": ["cui_categorization", "export_control_status", "approximate_record_count"],
+      "properties": {
+        "cui_categorization": { "enum": ["PUBLIC", "CUI-BASIC", "CUI-SPECIFIED", "CUI-SPECIFIED-NOFORN", "CONTROLLED-NOFORN", "CLASSIFIED-CONFIDENTIAL", "CLASSIFIED-SECRET", "CLASSIFIED-TOP-SECRET", "SCI"] },
+        "export_control_status": { "enum": ["ITAR", "EAR-CCL-RESTRICTED", "EAR-99", "NOT-EXPORT-CONTROLLED"] },
+        "approximate_record_count": { "type": "integer", "minimum": 0 },
+        "us_person_status_of_affected_persons_if_applicable": { "type": "string" }
+      }
+    },
+    "regulatory_basis": {
+      "type": "array", "minItems": 1,
+      "items": { "enum": [
+        "dfars-252-204-7012-cyber-incident-reporting",
+        "dfars-252-204-7019-self-assessment",
+        "dfars-252-204-7020-nist-800-171-assessment",
+        "dfars-252-204-7021-cmmc-certification",
+        "cmmc-2-0-level-2-c3pao-assessment",
+        "cmmc-2-0-level-3-dibcac-assessment",
+        "nist-sp-800-171-cui-protection",
+        "nist-sp-800-172-enhanced-security",
+        "itar-22-cfr-120-130",
+        "ear-15-cfr-730-774",
+        "ear-deemed-export-22-cfr-120-50",
+        "eo-13526-classified-national-security-information",
+        "icd-705-scif-standards",
+        "dodi-5230-24-distribution-statements",
+        "cui-notice-2020-04-implementation",
+        "nispom-32-cfr-117",
+        "nispom-insider-threat-conforming-change-2",
+        "far-52-204-21-basic-safeguarding",
+        "false-claims-act-31-usc-3729"
+      ] }
+    },
+    "dfars_72_hour_report_filed": {
+      "type": "object",
+      "properties": {
+        "report_id": { "type": "string" },
+        "filed_at": { "type": "string", "format": "date-time" },
+        "dibnet_dod_mil_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "response_actions": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["action", "owner", "due_at"],
+        "properties": {
+          "action": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string" },
+          "due_at": { "type": "string", "format": "date-time" },
+          "status": { "enum": ["open", "in-progress", "completed", "deferred"] }
+        }
+      }
+    },
+    "audit_stream_event_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "public_disclosure_posture": {
+      "type": "object",
+      "properties": {
+        "dibnet_reported": { "type": "boolean" },
+        "ddtc_voluntary_disclosure_filed": { "type": "boolean" },
+        "bis_voluntary_disclosure_filed": { "type": "boolean" },
+        "fso_notified_at": { "type": "string", "format": "date-time" },
+        "public_summary_url": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}
